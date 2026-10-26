@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   Users, 
   Wifi, 
-  WifiOff, 
+  UserRound, 
   Plus, 
   List,
   UserCheck
@@ -97,7 +97,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="flex items-center p-6 border-l-4 border-l-amber-500">
           <div className="p-3 rounded-full bg-amber-100 text-amber-600 mr-4">
-            <WifiOff size={24} />
+            <UserRound size={24} />
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Offline Mode</p>
