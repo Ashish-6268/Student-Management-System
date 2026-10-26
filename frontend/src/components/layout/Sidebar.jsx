@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings } from 'lucide-react';
 import { ROUTES } from '../../utils/constants';
 
@@ -13,10 +13,11 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col fixed left-0 top-0 z-40">
       <div className="h-16 flex items-center px-6 border-b border-gray-200">
-        <div className="flex flex-col">
-          <span className="text-xl font-bold text-blue-600">SMS</span>
-          <span className="text-xs text-gray-500 font-medium tracking-wide uppercase">Student Management</span>
-        </div>
+        <Link to={ROUTES.DASHBOARD} className="flex flex-col justify-center">
+          <span className="text-base font-bold text-blue-600 leading-tight tracking-tight">
+            Student Management System
+          </span>
+        </Link>
       </div>
 
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
