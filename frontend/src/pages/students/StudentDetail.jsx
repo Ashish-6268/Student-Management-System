@@ -178,15 +178,15 @@ export default function StudentDetail() {
             <ul className="space-y-4">
               <li className="flex justify-between items-center pb-2 border-b border-gray-100">
                 <span className="text-gray-500 text-sm">Class</span>
-                <span className="font-medium text-gray-900 bg-indigo-50 px-2 py-1 rounded">{student.class?.name || 'N/A'}</span>
+                <span className="font-medium text-gray-900 bg-indigo-50 px-2 py-1 rounded">{student.class_name || student.class?.name || 'N/A'}</span>
               </li>
               <li className="flex justify-between items-center pb-2 border-b border-gray-100">
                 <span className="text-gray-500 text-sm">Board</span>
-                <span className="font-medium text-gray-900">{student.board?.name || 'N/A'}</span>
+                <span className="font-medium text-gray-900">{student.board_name || student.board?.name || 'N/A'}</span>
               </li>
               <li className="flex justify-between items-center">
                 <span className="text-gray-500 text-sm">Mode</span>
-                <span className="font-medium text-gray-900">{student.mode?.name || 'N/A'}</span>
+                <span className="font-medium text-gray-900">{student.mode_name || student.mode?.name || 'N/A'}</span>
               </li>
             </ul>
 

@@ -6,33 +6,50 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('access_token'));
+  const [token, setToken] = useState(() => {
+    const saved = localStorage.getItem('access_token');
+    return saved && saved !== 'undefined' && saved !== 'null' ? saved : null;
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const initAuth = async () => {
-      if (token) {
+      const savedToken = localStorage.getItem('access_token');
+      if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
         try {
-          const userData = await getMe();
+          const res = await getMe();
+          const userData = res?.data || res;
           setUser(userData);
+          setToken(savedToken);
         } catch (error) {
           localStorage.removeItem('access_token');
           setToken(null);
           setUser(null);
         }
+      } else {
+        localStorage.removeItem('access_token');
+        setToken(null);
+        setUser(null);
       }
       setIsLoading(false);
     };
 
     initAuth();
-  }, [token]);
+  }, []);
 
   const login = async (email, password) => {
-    const data = await apiLogin(email, password);
-    localStorage.setItem('access_token', data.access_token);
-    setToken(data.access_token);
-    const userData = await getMe();
+    const res = await apiLogin(email, password);
+    // FastAPI returns { success: true, message: "...", data: { access_token: "...", token_type: "bearer" } }
+    const accessToken = res?.data?.access_token || res?.access_token;
+    if (!accessToken) {
+      throw new Error(res?.message || 'Login failed: No access token received');
+    }
+    localStorage.setItem('access_token', accessToken);
+    setToken(accessToken);
+    const userRes = await getMe();
+    const userData = userRes?.data || userRes;
     setUser(userData);
+    return userData;
   };
 
   const logout = () => {
@@ -58,4 +75,4 @@ export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
-};\n
+};

@@ -365,7 +365,7 @@ function ClassSubjectMapping() {
                 </div>
 
                 <div className="mt-6 pt-5 border-t border-gray-100 flex justify-end">
-                  <Button variant="primary" onClick={handleSave} isLoading={saving} className="min-w-[120px]">
+                  <Button variant="primary" onClick={handleSave} loading={saving} className="min-w-[120px]">
                     <Save size={16} className="mr-2 inline" /> Save Mapping
                   </Button>
                 </div>

@@ -7,10 +7,12 @@ export default function Button({
   size = 'md',
   icon: Icon,
   loading = false,
+  isLoading = false,
   disabled = false,
   className = '',
   ...rest
 }) {
+  const isSpinning = Boolean(loading || isLoading);
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variants = {
@@ -26,15 +28,15 @@ export default function Button({
     lg: 'px-6 py-3 text-base'
   };
 
-  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`;
+  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${disabled || isSpinning ? 'opacity-50 cursor-not-allowed' : ''} ${className}`;
 
   return (
     <button
-      disabled={disabled || loading}
+      disabled={disabled || isSpinning}
       className={classes}
       {...rest}
     >
-      {loading ? (
+      {isSpinning ? (
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
       ) : Icon ? (
         <Icon className="w-4 h-4 mr-2" />
@@ -42,4 +44,4 @@ export default function Button({
       {children}
     </button>
   );
-}\n
+}

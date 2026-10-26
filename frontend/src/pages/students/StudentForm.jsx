@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useForm, Controller } from 'react-form'; // Note: Will use react-hook-form properly
-import { useForm as useHookForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { getStudent, createStudent, updateStudent } from '../../api/students';
 import { getClasses, getBoards, getModes, getClassSubjects } from '../../api/settings';
 import { useToast } from '../../context/ToastContext';
@@ -29,7 +28,7 @@ export default function StudentForm() {
   const [availableSubjects, setAvailableSubjects] = useState([]);
   const [loadingSubjects, setLoadingSubjects] = useState(false);
 
-  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useHookForm({
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm({
     defaultValues: {
       roll_number: '',
       name: '',
@@ -115,7 +114,7 @@ export default function StudentForm() {
   }, [watchClassId]);
 
   const onSubmit = async (data) => {
-    if (data.subject_ids.length === 0) {
+    if (!data.subject_ids || data.subject_ids.length === 0) {
       showToast('Please select at least one subject', 'error');
       return;
     }
@@ -124,11 +123,19 @@ export default function StudentForm() {
     try {
       const payload = {
         ...data,
-        class_id: parseInt(data.class_id),
-        board_id: parseInt(data.board_id),
-        mode_id: parseInt(data.mode_id),
-        subject_ids: data.subject_ids.map(id => parseInt(id))
+        class_id: parseInt(data.class_id, 10),
+        board_id: parseInt(data.board_id, 10),
+        mode_id: parseInt(data.mode_id, 10),
+        contact_number_1: data.contact_number_1 ? data.contact_number_1.trim() : '',
+        contact_number_2: data.contact_number_2 && data.contact_number_2.trim() ? data.contact_number_2.trim() : null,
+        contact_number_3: data.contact_number_3 && data.contact_number_3.trim() ? data.contact_number_3.trim() : null,
+        remarks: data.remarks && data.remarks.trim() ? data.remarks.trim() : null,
+        subject_ids: (data.subject_ids || []).map(id => parseInt(id, 10))
       };
+
+      if (isEditMode) {
+        delete payload.roll_number;
+      }
 
       const res = isEditMode 
         ? await updateStudent(id, payload)
@@ -148,11 +155,12 @@ export default function StudentForm() {
   };
 
   const handleSubjectToggle = (subjectId) => {
-    const current = watchSubjectIds || [];
-    if (current.includes(subjectId)) {
-      setValue('subject_ids', current.filter(id => id !== subjectId));
+    const numId = Number(subjectId);
+    const current = (watchSubjectIds || []).map(Number);
+    if (current.includes(numId)) {
+      setValue('subject_ids', current.filter(id => id !== numId), { shouldValidate: true });
     } else {
-      setValue('subject_ids', [...current, subjectId]);
+      setValue('subject_ids', [...current, numId], { shouldValidate: true });
     }
   };
 
@@ -237,7 +245,7 @@ export default function StudentForm() {
                       <input
                         type="checkbox"
                         className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
-                        checked={(watchSubjectIds || []).includes(subject.id)}
+                        checked={(watchSubjectIds || []).map(Number).includes(Number(subject.id))}
                         onChange={() => handleSubjectToggle(subject.id)}
                       />
                       <span className="text-sm text-gray-700">{subject.name}</span>
@@ -296,7 +304,7 @@ export default function StudentForm() {
             <Button type="button" variant="ghost" onClick={() => navigate(-1)} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" isLoading={loading}>
+            <Button type="submit" variant="primary" loading={loading}>
               {isEditMode ? 'Update Student' : 'Save Student'}
             </Button>
           </div>

@@ -17,4 +17,7 @@ export const addSubject = (data) => post('/settings/subjects', data);
 export const updateSubject = (id, data) => put(`/settings/subjects/${id}`, data);
 
 export const getClassSubjects = (classId) => get(`/settings/classes/${classId}/subjects`);
-export const updateClassSubjects = (classId, subjectIds) => put(`/settings/classes/${classId}/subjects`, subjectIds);\n
+export const updateClassSubjects = (classId, subjectIds) => put(
+  `/settings/classes/${classId}/subjects`, 
+  { subject_ids: Array.isArray(subjectIds) ? subjectIds : (subjectIds?.subject_ids || []) }
+);

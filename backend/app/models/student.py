@@ -24,3 +24,39 @@ class Student(Base):
     board = relationship("Board", back_populates="students")
     mode = relationship("Mode", back_populates="students")
     subjects = relationship("Subject", secondary="student_subjects", back_populates="students")
+
+    @property
+    def class_model(self):
+        return self.class_
+
+    @property
+    def class_name(self) -> str | None:
+        if hasattr(self, "_class_name") and self._class_name is not None:
+            return self._class_name
+        return self.class_.name if self.class_ else None
+
+    @class_name.setter
+    def class_name(self, value):
+        self._class_name = value
+
+    @property
+    def board_name(self) -> str | None:
+        if hasattr(self, "_board_name") and self._board_name is not None:
+            return self._board_name
+        return self.board.name if self.board else None
+
+    @board_name.setter
+    def board_name(self, value):
+        self._board_name = value
+
+    @property
+    def mode_name(self) -> str | None:
+        if hasattr(self, "_mode_name") and self._mode_name is not None:
+            return self._mode_name
+        return self.mode.name if self.mode else None
+
+    @mode_name.setter
+    def mode_name(self, value):
+        self._mode_name = value
+
+

@@ -25,4 +25,4 @@ export const truncate = (str, maxLen) => {
   if (!str) return '';
   if (str.length <= maxLen) return str;
   return str.slice(0, maxLen) + '...';
-};\n
+};

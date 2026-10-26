@@ -12,4 +12,4 @@ export const login = async (email, password) => {
   });
 };
 
-export const getMe = () => get('/auth/me');\n
+export const getMe = () => get('/auth/me');

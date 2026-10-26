@@ -28,7 +28,7 @@ export default function Table({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                {col.label}
+                {col.label || col.title}
               </th>
             ))}
           </tr>
@@ -59,4 +59,4 @@ export default function Table({
       </table>
     </div>
   );
-}\n
+}

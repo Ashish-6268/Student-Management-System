@@ -23,8 +23,8 @@ class UnauthorizedException(AppException):
         super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
 
 class ArchivedStudentException(AppException):
-    def __init__(self):
+    def __init__(self, detail: str = "Cannot modify an archived student. Restore the student first."):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot modify an archived student. Restore the student first."
+            detail=detail
         )

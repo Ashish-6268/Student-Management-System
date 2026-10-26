@@ -21,10 +21,11 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         user_id = payload.get("sub")
         if user_id is None:
             raise UnauthorizedException()
+        user_id_int = int(user_id)
     except Exception:
         raise UnauthorizedException()
         
-    user = db.query(User).filter(User.id == int(user_id)).first()
+    user = db.query(User).filter(User.id == user_id_int).first()
     if not user:
         raise UnauthorizedException()
     if not user.is_active:

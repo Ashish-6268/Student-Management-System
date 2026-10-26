@@ -18,8 +18,19 @@ class StudentBase(BaseModel):
     @field_validator("contact_number_1", "contact_number_2", "contact_number_3")
     @classmethod
     def validate_contact(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and not re.match(r"^\d{10}$", v):
-            raise ValueError("Contact number must be exactly 10 digits")
+        if v is not None:
+            v = v.strip()
+            if v == "":
+                return None
+            if not re.match(r"^\d{10}$", v):
+                raise ValueError("Contact number must be exactly 10 digits")
+        return v
+
+    @field_validator("remarks")
+    @classmethod
+    def validate_remarks(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v.strip() == "":
+            return None
         return v
 
 class StudentCreate(StudentBase):
@@ -41,8 +52,19 @@ class StudentUpdate(BaseModel):
     @field_validator("contact_number_1", "contact_number_2", "contact_number_3")
     @classmethod
     def validate_contact(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and not re.match(r"^\d{10}$", v):
-            raise ValueError("Contact number must be exactly 10 digits")
+        if v is not None:
+            v = v.strip()
+            if v == "":
+                return None
+            if not re.match(r"^\d{10}$", v):
+                raise ValueError("Contact number must be exactly 10 digits")
+        return v
+
+    @field_validator("remarks")
+    @classmethod
+    def validate_remarks(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v.strip() == "":
+            return None
         return v
 
 class StudentResponse(StudentBase):

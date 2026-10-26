@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../context/ToastContext';
+import { ROUTES } from '../utils/constants';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 
@@ -9,6 +11,7 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { login } = useAuth();
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data) => {
@@ -16,6 +19,7 @@ export default function LoginPage() {
       setIsLoading(true);
       await login(data.email, data.password);
       showToast('Logged in successfully', 'success');
+      navigate(ROUTES.DASHBOARD);
     } catch (error) {
       showToast(error.message || 'Failed to login', 'error');
     } finally {
@@ -28,21 +32,17 @@ export default function LoginPage() {
       <div className="space-y-4">
         <Input
           label="Email Address"
-          name="email"
           type="email"
           placeholder="admin@example.com"
-          register={register}
-          error={errors.email}
-          required
+          {...register('email', { required: 'Email address is required' })}
+          error={errors.email?.message}
         />
         <Input
           label="Password"
-          name="password"
           type="password"
           placeholder="••••••••"
-          register={register}
-          error={errors.password}
-          required
+          {...register('password', { required: 'Password is required' })}
+          error={errors.password?.message}
         />
       </div>
 
@@ -55,4 +55,4 @@ export default function LoginPage() {
       </Button>
     </form>
   );
-}\n
+}

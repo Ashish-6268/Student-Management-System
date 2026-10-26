@@ -25,4 +25,4 @@ export const SORT_OPTIONS = [
 export const SORT_ORDER = {
   ASC: 'asc',
   DESC: 'desc'
-};\n
+};

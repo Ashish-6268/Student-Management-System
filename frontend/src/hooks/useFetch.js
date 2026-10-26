@@ -42,4 +42,4 @@ export default function useFetch(fetchFn, dependencies = []) {
   }, dependencies);
 
   return { data, isLoading, error, refetch: execute };
-}\n
+}

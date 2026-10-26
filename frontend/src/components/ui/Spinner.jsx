@@ -16,4 +16,4 @@ export default function Spinner({
       <Loader2 className={`animate-spin text-blue-600 ${sizes[size]}`} />
     </div>
   );
-}\n
+}

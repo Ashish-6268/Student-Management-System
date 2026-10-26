@@ -34,7 +34,7 @@ import { formatDate } from '../../utils/formatters';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({ total_active: 0, online: 0, offline: 0 });
+  const [stats, setStats] = useState({ total_active: 0, online_count: 0, offline_count: 0 });
   const [classData, setClassData] = useState([]);
   const [boardData, setBoardData] = useState([]);
   const [recentStudents, setRecentStudents] = useState([]);
@@ -83,7 +83,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Total Active</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.total_active}</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.total_active || 0}</p>
           </div>
         </Card>
         <Card className="flex items-center p-6 border-l-4 border-l-green-500">
@@ -92,7 +92,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Online Mode</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.online}</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.online_count ?? stats.online ?? 0}</p>
           </div>
         </Card>
         <Card className="flex items-center p-6 border-l-4 border-l-amber-500">
@@ -101,7 +101,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Offline Mode</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.offline}</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.offline_count ?? stats.offline ?? 0}</p>
           </div>
         </Card>
       </div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
                     <td className="px-6 py-4 font-medium text-gray-900">{student.roll_number}</td>
                     <td className="px-6 py-4">{student.name}</td>
                     <td className="px-6 py-4">
-                      <Badge variant="primary">{student.class?.name || 'N/A'}</Badge>
+                      <Badge variant="info">{student.class_name || student.class?.name || 'N/A'}</Badge>
                     </td>
                     <td className="px-6 py-4 text-gray-500">{formatDate(student.created_at)}</td>
                   </tr>

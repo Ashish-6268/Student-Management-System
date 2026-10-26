@@ -1,7 +1,14 @@
 import { get, post, put, patch } from './client';
 
 export const getStudents = (params = {}) => {
-  const query = new URLSearchParams(params).toString();
+  const cleanParams = {};
+  Object.keys(params).forEach(key => {
+    const val = params[key];
+    if (val !== undefined && val !== null && val !== '') {
+      cleanParams[key] = val;
+    }
+  });
+  const query = new URLSearchParams(cleanParams).toString();
   return get(`/students${query ? '?' + query : ''}`);
 };
 
@@ -13,4 +20,4 @@ export const updateStudent = (id, data) => put(`/students/${id}`, data);
 
 export const archiveStudent = (id) => patch(`/students/${id}/archive`);
 
-export const restoreStudent = (id) => patch(`/students/${id}/restore`);\n
+export const restoreStudent = (id) => patch(`/students/${id}/restore`);

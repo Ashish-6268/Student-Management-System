@@ -5,26 +5,35 @@ import Button from '../ui/Button';
 export default function ConfirmDialog({
   isOpen,
   onClose,
+  onCancel,
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  variant = 'danger'
+  confirmText,
+  confirmLabel,
+  cancelText,
+  cancelLabel,
+  variant,
+  confirmVariant
 }) {
+  const finalOnClose = onClose || onCancel;
+  const finalConfirmText = confirmText || confirmLabel || 'Confirm';
+  const finalCancelText = cancelText || cancelLabel || 'Cancel';
+  const finalVariant = variant || confirmVariant || 'danger';
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
+    <Modal isOpen={isOpen} onClose={finalOnClose} title={title} size="sm">
       <div className="mt-2">
         <p className="text-sm text-gray-500">{message}</p>
       </div>
       <div className="mt-6 flex justify-end space-x-3">
-        <Button variant="secondary" onClick={onClose}>
-          {cancelText}
+        <Button variant="secondary" onClick={finalOnClose}>
+          {finalCancelText}
         </Button>
-        <Button variant={variant} onClick={onConfirm}>
-          {confirmText}
+        <Button variant={finalVariant} onClick={onConfirm}>
+          {finalConfirmText}
         </Button>
       </div>
     </Modal>
   );
-}\n
+}

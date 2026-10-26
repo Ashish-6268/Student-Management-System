@@ -8,7 +8,10 @@ from typing import Optional
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
-@router.get("/", response_model=PaginatedResponse)
+import math
+
+@router.get("", response_model=PaginatedResponse)
+@router.get("/", response_model=PaginatedResponse, include_in_schema=False)
 def get_students(
     search: Optional[str] = None,
     class_id: Optional[int] = None,
@@ -40,12 +43,14 @@ def get_students(
         })
         data.append(s_data)
         
+    pages = math.ceil(total / per_page) if per_page else 1
     return PaginatedResponse(
         data=data,
-        meta={"total": total, "page": page, "per_page": per_page}
+        meta={"total": total, "page": page, "per_page": per_page, "pages": pages}
     )
 
-@router.post("/", response_model=ResponseBase)
+@router.post("", response_model=ResponseBase)
+@router.post("/", response_model=ResponseBase, include_in_schema=False)
 def create_student(data: StudentCreate, db: Session = Depends(get_db)):
     student_data = data.model_dump(exclude={"subject_ids"})
     student = student_service.create_student(db, student_data, data.subject_ids)
@@ -59,6 +64,7 @@ def create_student(data: StudentCreate, db: Session = Depends(get_db)):
     return ResponseBase(data=StudentResponse.model_validate(student))
 
 @router.get("/{id}", response_model=ResponseBase)
+@router.get("/{id}/", response_model=ResponseBase, include_in_schema=False)
 def get_student(id: int, db: Session = Depends(get_db)):
     student = student_service.get_student(db, id)
     student.class_name = student.class_model.name if student.class_model else None
@@ -67,6 +73,7 @@ def get_student(id: int, db: Session = Depends(get_db)):
     return ResponseBase(data=StudentResponse.model_validate(student))
 
 @router.put("/{id}", response_model=ResponseBase)
+@router.put("/{id}/", response_model=ResponseBase, include_in_schema=False)
 def update_student(id: int, data: StudentUpdate, db: Session = Depends(get_db)):
     update_data = data.model_dump(exclude_unset=True, exclude={"subject_ids"})
     student = student_service.update_student(db, id, update_data, data.subject_ids)
@@ -79,11 +86,13 @@ def update_student(id: int, data: StudentUpdate, db: Session = Depends(get_db)):
     return ResponseBase(data=StudentResponse.model_validate(student))
 
 @router.patch("/{id}/archive", response_model=ResponseBase)
+@router.patch("/{id}/archive/", response_model=ResponseBase, include_in_schema=False)
 def archive_student(id: int, db: Session = Depends(get_db)):
     student_service.archive_student(db, id)
     return ResponseBase(message="Student archived successfully")
 
 @router.patch("/{id}/restore", response_model=ResponseBase)
+@router.patch("/{id}/restore/", response_model=ResponseBase, include_in_schema=False)
 def restore_student(id: int, db: Session = Depends(get_db)):
     student_service.restore_student(db, id)
     return ResponseBase(message="Student restored successfully")

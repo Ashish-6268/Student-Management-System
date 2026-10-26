@@ -15,11 +15,11 @@ import app.models  # noqa: F401
 # access to the values within the .ini file in use.
 config = context.config
 
-# Override sqlalchemy.url from our app config
-config.set_main_option(
-    "sqlalchemy.url",
-    settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg://")
-)
+db_url = settings.DATABASE_URL
+if db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+config.set_main_option("sqlalchemy.url", db_url)
+
 
 # Interpret the config file for Python logging.
 if config.config_file_name is not None:

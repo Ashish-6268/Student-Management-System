@@ -81,4 +81,4 @@ export default function App() {
       </AuthProvider>
     </ErrorBoundary>
   );
-}\n
+}

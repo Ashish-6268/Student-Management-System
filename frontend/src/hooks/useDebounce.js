@@ -14,4 +14,4 @@ export default function useDebounce(value, delay = 300) {
   }, [value, delay]);
 
   return debouncedValue;
-}\n
+}

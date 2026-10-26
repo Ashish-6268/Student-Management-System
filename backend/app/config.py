@@ -5,8 +5,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
-    ENVIRONMENT: str = 'development'
-    ALLOWED_ORIGINS: str = 'http://localhost:5173'
+    ALLOWED_ORIGINS: str = 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000,http://localhost,http://localhost:80'
 
     @property
     def allowed_origins_list(self) -> List[str]:

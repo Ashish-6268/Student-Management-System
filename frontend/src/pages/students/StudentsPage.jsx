@@ -73,10 +73,9 @@ export default function StudentsPage() {
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const offset = (page - 1) * 10;
       const params = {
-        offset,
-        limit: 10,
+        page,
+        per_page: 10,
         search: searchParam,
         class_id: classId,
         board_id: boardId,
@@ -90,7 +89,11 @@ export default function StudentsPage() {
       const res = await getStudents(params);
       if (res.success) {
         setStudents(res.data);
-        if (res.meta) setMeta(res.meta);
+        const metaData = res.meta || {};
+        const total = metaData.total || 0;
+        const perPage = metaData.per_page || 10;
+        const totalPages = metaData.pages || Math.ceil(total / perPage) || 1;
+        setMeta({ ...metaData, pages: totalPages });
       }
     } catch (error) {
       showToast('Failed to fetch students', 'error');
@@ -139,26 +142,26 @@ export default function StudentsPage() {
   };
 
   const columns = [
-    { key: 'roll_number', title: 'Roll No', sortable: true },
-    { key: 'name', title: 'Name', sortable: true },
+    { key: 'roll_number', label: 'Roll No', sortable: true },
+    { key: 'name', label: 'Name', sortable: true },
     { 
       key: 'class', 
-      title: 'Class',
-      render: (item) => item.class?.name || 'N/A'
+      label: 'Class',
+      render: (item) => item.class_name || item.class?.name || 'N/A'
     },
     { 
       key: 'board', 
-      title: 'Board',
-      render: (item) => item.board?.name || 'N/A'
+      label: 'Board',
+      render: (item) => item.board_name || item.board?.name || 'N/A'
     },
     { 
       key: 'mode', 
-      title: 'Mode',
-      render: (item) => item.mode?.name || 'N/A'
+      label: 'Mode',
+      render: (item) => item.mode_name || item.mode?.name || 'N/A'
     },
     { 
       key: 'status', 
-      title: 'Status',
+      label: 'Status',
       render: (item) => (
         <Badge variant={item.is_archived ? 'secondary' : 'success'}>
           {item.is_archived ? 'Archived' : 'Active'}
@@ -167,7 +170,7 @@ export default function StudentsPage() {
     },
     {
       key: 'actions',
-      title: 'Actions',
+      label: 'Actions',
       render: (item) => (
         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           <button 
@@ -244,7 +247,7 @@ export default function StudentsPage() {
                 options={[
                   { value: 'name', label: 'Sort by Name' },
                   { value: 'roll_number', label: 'Sort by Roll No' },
-                  { value: 'created_at', label: 'Sort by Date Added' }
+                  { value: 'class', label: 'Sort by Class' }
                 ]}
                 className="min-w-[150px]"
               />

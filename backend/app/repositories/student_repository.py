@@ -42,7 +42,12 @@ class StudentRepository(BaseRepository[Student]):
         return students, total_count
 
     def get_student_by_id(self, db: Session, id: int) -> Student:
-        return db.query(Student).options(joinedload(Student.subjects)).filter(Student.id == id).first()
+        return db.query(Student).options(
+            joinedload(Student.subjects),
+            joinedload(Student.class_),
+            joinedload(Student.board),
+            joinedload(Student.mode)
+        ).filter(Student.id == id).first()
 
     def get_student_by_roll_number(self, db: Session, roll_number: str) -> Student:
         return db.query(Student).filter(Student.roll_number == roll_number).first()
