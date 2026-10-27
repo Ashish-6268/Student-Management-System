@@ -260,18 +260,19 @@ pytest -v
 ## Deployment Status & Verification
 
 ### Containerization Status
-- **Backend Dockerfile**: Configured (`python:3.12-slim`, dependency installation, automatic migration, seed, and Uvicorn start).
-- **Frontend Dockerfile**: Configured (Multi-stage build with `node:18-alpine` for Vite compilation and `nginx:alpine` for serving static assets).
-- **NGINX Configuration**: Configured at `nginx/nginx.conf` (Reverse proxies `/api/` requests to `http://backend:8000`, enables gzip compression, and implements React Router SPA fallback with `try_files $uri $uri/ /index.html`).
-- **Docker Compose**: Orchestrates `db` (Postgres 15), `backend`, and `frontend` with named volume `postgres_data`.
+- **Backend Dockerfile**: Configured (`python:3.12-slim`, `.dockerignore` to exclude virtualenvs/caches, dependency installation, automatic migration, seed, and Uvicorn start).
+- **Frontend Dockerfile**: Configured (Multi-stage build with `node:18-alpine` with `ARG VITE_API_BASE_URL=/api/v1` and `nginx:alpine` for serving static assets).
+- **NGINX Configuration**: Configured at `nginx/nginx.conf` (Reverse proxies `/api` and `/api/` requests to `http://backend:8000`, 10MB body size, gzip compression, and React Router SPA fallback with `try_files $uri $uri/ /index.html`).
+- **Docker Compose**: Orchestrates `db` (Postgres 15 with `pg_isready` healthcheck), `backend` (`depends_on: db: condition: service_healthy`), and `frontend` (port 80).
+- **Port Conflict Prevention**: Host mappings default to non-conflicting ports (`5433` for DB, `8001` for Backend direct access) to avoid collisions with native Windows PostgreSQL (5432) and local Uvicorn (8000). Standard container-to-container communication remains on internal ports `5432` and `8000`.
 
 ### Deployment Checklist
 
 | Component | Status | Notes |
 |---|---|---|
 | **Local Full-Stack Prototype** | Verified | Tested end-to-end via frontend proxy and backend tests |
-| **Docker Compose Config** | Configured | `docker-compose.yml`, `Dockerfile`s, and `nginx.conf` present |
-| **Containerized Local Execution** | Ready to Test | Can be started locally using `docker compose up --build` |
+| **Docker Compose Config** | Configured & Hardened | `docker-compose.yml`, health checks, build args, `.dockerignore`s, and `nginx.conf` present |
+| **Containerized Local Execution** | Ready to Run | Can be started locally using `docker compose up --build` |
 | **AWS EC2 Production Deployment** | Pending Execution | EC2 instance provisioning, Docker installation on remote host, and production security group setup are pending |
 
 ### Steps to Deploy on AWS EC2 (When Ready)
