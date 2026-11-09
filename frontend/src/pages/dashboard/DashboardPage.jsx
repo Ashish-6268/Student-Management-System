@@ -46,10 +46,15 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (statsData?.data) setStats(statsData.data);
-    if (classChartData?.data) setClassData(classChartData.data);
+    if (classChartData?.data) {
+      const sorted = [...classChartData.data].sort((a, b) => (a.order_id ?? a.display_order ?? 0) - (b.order_id ?? b.display_order ?? 0));
+      setClassData(sorted);
+    }
     if (boardChartData?.data) setBoardData(boardChartData.data);
     if (recentData?.data) setRecentStudents(recentData.data);
   }, [statsData, classChartData, boardChartData, recentData]);
+
+  const sortedClassData = [...classData].sort((a, b) => (a.order_id ?? a.display_order ?? 0) - (b.order_id ?? b.display_order ?? 0));
 
   if (loadingStats || loadingClass || loadingBoard || loadingRecent) {
     return <div className="flex h-64 items-center justify-center"><Spinner size="lg" /></div>;
@@ -111,7 +116,7 @@ export default function DashboardPage() {
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Students by Class</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={classData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <BarChart data={sortedClassData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                 <XAxis type="number" />
                 <YAxis dataKey="class_name" type="category" width={100} />

@@ -9,6 +9,7 @@ class DashboardStats(BaseModel):
 class ClassDistribution(BaseModel):
     class_name: str
     count: int
+    order_id: int = 0
 
 class BoardDistribution(BaseModel):
     board_name: str

@@ -11,7 +11,18 @@ class DashboardRepository:
         return {r[0]: r[1] for r in results}
         
     def get_students_by_class(self, db: Session) -> list:
-        return db.query(ClassModel.name, func.count(Student.id)).outerjoin(Student, (Student.class_id == ClassModel.id) & (Student.is_archived == False)).group_by(ClassModel.name).all()
+        return db.query(
+            ClassModel.name,
+            func.count(Student.id),
+            ClassModel.display_order
+        ).outerjoin(
+            Student, (Student.class_id == ClassModel.id) & (Student.is_archived == False)
+        ).group_by(
+            ClassModel.name,
+            ClassModel.display_order
+        ).order_by(
+            ClassModel.display_order.asc()
+        ).all()
         
     def get_students_by_board(self, db: Session) -> list:
         return db.query(Board.name, func.count(Student.id)).outerjoin(Student, (Student.board_id == Board.id) & (Student.is_archived == False)).group_by(Board.name).all()

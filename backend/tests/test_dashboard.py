@@ -10,7 +10,13 @@ def test_dashboard_endpoints(client, auth_headers):
     # Test students by class
     class_res = client.get("/api/v1/dashboard/students-by-class", headers=auth_headers)
     assert class_res.status_code == 200
-    assert isinstance(class_res.json()["data"], list)
+    class_data = class_res.json()["data"]
+    assert isinstance(class_data, list)
+    if class_data:
+        assert "order_id" in class_data[0]
+        # Verify ascending order by order_id
+        order_ids = [item["order_id"] for item in class_data]
+        assert order_ids == sorted(order_ids)
 
     # Test students by board
     board_res = client.get("/api/v1/dashboard/students-by-board", headers=auth_headers)

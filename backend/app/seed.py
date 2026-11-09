@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 def seed_data(db: Session):
     logger.info("Creating tables...")
-    Base.metadata.create_all(bind=engine)
+    bind = db.get_bind() if db else engine
+    Base.metadata.create_all(bind=bind)
 
     # User
     user = db.query(User).filter(User.email == "admin@institute.com").first()

@@ -12,7 +12,14 @@ class DashboardService:
 
     def get_students_by_class(self, db: Session) -> list[ClassDistribution]:
         data = dashboard_repo.get_students_by_class(db)
-        return [ClassDistribution(class_name=row[0], count=row[1]) for row in data if row[0] is not None]
+        return [
+            ClassDistribution(
+                class_name=row[0],
+                count=row[1],
+                order_id=row[2] if len(row) > 2 and row[2] is not None else 0
+            )
+            for row in data if row[0] is not None
+        ]
 
     def get_students_by_board(self, db: Session) -> list[BoardDistribution]:
         data = dashboard_repo.get_students_by_board(db)
