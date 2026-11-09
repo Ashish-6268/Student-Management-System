@@ -21,7 +21,7 @@ A full-stack, internal student management platform built for institute managemen
   - Dedicated **Settings module** enabling code-free management of Classes, Boards, Modes, Subjects, and Class-Subject junction mappings.
 - **Analytics Dashboard**:
   - Key metrics: Total Active Students, Online Mode count, and Offline Mode count.
-  - Visual charts powered by Recharts (Students by Class bar chart, Students by Board pie/donut chart).
+  - Visual charts powered by Recharts (Students by Class bar chart sorted by class order with integer-only count axis, Students by Board pie/donut chart).
   - Quick actions and recent student admissions feed.
 
 ---
@@ -272,26 +272,47 @@ pytest -v
 |---|---|---|
 | **Local Full-Stack Prototype** | Verified | Tested end-to-end via frontend proxy and backend tests |
 | **Docker Compose Config** | Configured & Hardened | `docker-compose.yml`, health checks, build args, `.dockerignore`s, and `nginx.conf` present |
-| **Containerized Local Execution** | Ready to Run | Can be started locally using `docker compose up --build` |
-| **AWS EC2 Production Deployment** | Pending Execution | EC2 instance provisioning, Docker installation on remote host, and production security group setup are pending |
+| **Containerized Local Execution** | Verified | Tested via `docker compose up --build` on AWS EC2 |
+| **AWS EC2 Production Deployment** | Deployed | Dockerized application running on Amazon Linux EC2 instance, accessible via public IP on port 80 |
 
-### Steps to Deploy on AWS EC2 (When Ready)
+### Steps to Deploy on AWS EC2
 
 1. **Launch EC2 Instance**:
-   - Ubuntu 22.04 LTS / 24.04 LTS (`t2.small` or `t3.small` recommended).
-   - In Security Group, open inbound ports: `22` (SSH), `80` (HTTP), `443` (HTTPS).
-2. **Install Docker & Docker Compose on EC2**:
+   - Amazon Linux 2023 (`t2.small` or `t3.small` recommended; 1 GB RAM minimum).
+   - In Security Group, open inbound ports: `22` (SSH), `80` (HTTP).
+2. **Install Docker on EC2**:
    ```bash
-   sudo apt-get update
-   sudo apt-get install -y docker.io docker-compose-v2
-   sudo usermod -aG docker $USER
+   sudo dnf update -y
+   sudo dnf install -y git docker
+   sudo systemctl enable --now docker
    ```
-3. **Deploy Application**:
-   - Clone repository onto EC2.
-   - Set production `SECRET_KEY` and database credentials in `.env` or `docker-compose.yml`.
-   - Run:
-     ```bash
-     docker compose up --build -d
-     ```
-4. **Access Application**:
-   Navigate to the public EC2 IPv4 address or domain at port `80`.
+3. **Add Swap Space** (required for 1 GB RAM instances):
+   ```bash
+   sudo fallocate -l 2G /swapfile
+   sudo chmod 600 /swapfile
+   sudo mkswap /swapfile
+   sudo swapon /swapfile
+   ```
+4. **Deploy Application**:
+   ```bash
+   git clone https://github.com/Ashish-6268/Student-Management-System.git
+   cd Student-Management-System
+   cp .env.example .env
+   ```
+   Generate and set a production `SECRET_KEY` in `.env`:
+   ```bash
+   python3 -c "import secrets; print(secrets.token_hex(32))"
+   nano .env
+   ```
+5. **Build and Start**:
+   ```bash
+   sudo docker compose up --build -d
+   ```
+6. **Update After Code Changes**:
+   ```bash
+   cd ~/Student-Management-System
+   git pull origin main
+   sudo docker compose up --build -d
+   ```
+7. **Access Application**:
+   Navigate to the public EC2 IPv4 address at port `80`.
