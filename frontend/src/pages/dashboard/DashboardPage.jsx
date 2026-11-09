@@ -118,7 +118,7 @@ export default function DashboardPage() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={sortedClassData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" />
+                <XAxis type="number" allowDecimals={false} />
                 <YAxis dataKey="class_name" type="category" width={100} />
                 <Tooltip cursor={{fill: 'transparent'}} />
                 <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} />
